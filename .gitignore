@@ -1,5 +1,6 @@
 node_modules
-/src/generated
+/generated
 /src/upload
 /src/images
 .env
+
