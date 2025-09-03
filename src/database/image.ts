@@ -47,10 +47,17 @@ static async counImage(): Promise<number>{
 
 }
 
-static async allImages(category: string, skip: number): Promise<{ id: number, path: string, category: string }[]> {
+static async allImages(category: string, skip: number): Promise<any[]> {
   try {
 
-   return [{ id: 0, path: 'sss', category: 'ss' }]
+   const listImages = await database.collection('images')
+   .find({ category })
+   .limit(10)
+   .skip(skip)
+   .sort(-1)
+   .toArray()
+
+   return listImages
 
   }
   catch (err) {

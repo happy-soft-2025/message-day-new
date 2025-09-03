@@ -67,6 +67,7 @@ class Message {
       .find({ category })
       .skip(page)
       .limit(20)
+      .sort(-1)
       .toArray()
 
       return listMessages
