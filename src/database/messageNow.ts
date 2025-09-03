@@ -1,42 +1,27 @@
-import {  PrismaClient } from '../../generated/prisma';
+import { client } from './config';
+import { ObjectId } from 'mongodb';
 
-const connectionDataBase = new PrismaClient()
+const database = client.db('message-day')
 
 class MessageNow {
   static async addMessageNow(message: string): Promise<boolean>{
 
-    try {
+    try{
 
-      await connectionDataBase.$connect()
+      await client.connect()
 
-      const existMessageRegistred = await connectionDataBase.messageNow.findMany()
+      await database.collection('message-now').deleteMany() 
+      await database.collection('message-now').insertOne({ message })
+
       
-
-      if(existMessageRegistred.length < 1){
-
-        await connectionDataBase.messageNow.create({
-          data: {
-            message
-          }
-        })
-
-      }
-
-      await connectionDataBase.messageNow.updateMany({
-        where: { id: 1 },
-        data: { message }
-      })
-
       return true
     }
-
     catch (err) {
+      await client.close()
       return false
     }
-
     finally {
-
-      await connectionDataBase.$disconnect();
+      await client.close()
     }
 
   }
@@ -46,23 +31,21 @@ class MessageNow {
     
     try {
 
-      await connectionDataBase.$connect();
+      await client.connect()
 
-      const message = await connectionDataBase.messageNow.findMany({ where: { id: 1 } })
+      const messageNow = await database.collection('message-now')
+      .find({})
+      .toArray()
 
-      return message
-
-    }
-    catch (err) {
-
-      return ''
+      return messageNow as any
 
     }
+    catch (err){
 
+
+    }
     finally {
-
-      await connectionDataBase.$disconnect()
-
+      await client.close()
     }
 
   }

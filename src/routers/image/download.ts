@@ -18,7 +18,7 @@ download.get('/image/download/:id', async (req: Request, res: Response)=>{
   }
 
 
-   await Image.searchImage(Number(req.params.id))
+   await Image.searchImage(req.params.id)
    .then(async  image  => {
 
     res.download(path.resolve(".", 'src', 'images', image[0].path))

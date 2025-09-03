@@ -5,14 +5,17 @@ import { Image } from '../database'
 
 
 async function deleteImageAll(req: Request, res: Response){
+  
+  const sucessDeleteImageDataBase: boolean = await Image.deleteImage(req.body.imageDelete.id);
 
-  const sucessDeleteImageDataBase: boolean = await Image.deleteImage(req.body.imageDelete.id)
+  console.log(req.body.imageDelete)
 
   if(!sucessDeleteImageDataBase){
     res.json({
       sucess: false,
       message: 'error delete image database'
     })
+
     return
   }
 
@@ -31,8 +34,6 @@ async function deleteImageAll(req: Request, res: Response){
     sucess: true,
     message: 'delete sucess'
   })
-
-
 
 }
 

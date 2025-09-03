@@ -5,9 +5,10 @@ import { Image } from '../database';
 
 
 async function moveImageCategory(pathUplaod: string, folderCategory: string){
-  await fs.copyFile(pathUplaod, folderCategory)
+  await fs.copyFile(pathUplaod, folderCategory);
   await fs.unlink(pathUplaod);
-}
+};
+
 
 async function saveImageCategory(req: Request, res: Response, next: NextFunction){
 

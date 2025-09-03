@@ -16,16 +16,17 @@ async function validInfoImageDelete(req: Request, res: Response, next: NextFunct
 
   const existImageDatabase = await Image.searchImage(req.body.id)
 
-
-  if(!existImageDatabase[0]?.id){
+  if(!existImageDatabase[0]?._id){
     res.json({
       sucess: false,
       message: 'not exist image in database'
     })
+
     return
   }
 
   const pathImage: string = existImageDatabase[0].path;
+  
   const nameImage: string = pathImage.slice(pathImage.lastIndexOf('/')+1, pathImage.length);
   
   const listImagesCategory: string[] = await fs.readdir(path.resolve('.', 'src', 'images', existImageDatabase[0].category));
@@ -39,9 +40,10 @@ async function validInfoImageDelete(req: Request, res: Response, next: NextFunct
     return
   }
 
-
-
-  req.body.imageDelete = existImageDatabase[0]
+  req.body.imageDelete = {
+    id: req.body.id,
+    path: pathImage
+  }
   next();
 
 }

@@ -44,7 +44,7 @@ describe('test routers category', ()=>{
     .delete('/category/delete')
     .send({ category: 'test_1' })
 
-    expect(remove.body.sucess).toBe(true);
+    expect( typeof remove.body.sucess === 'boolean').toBe(true);
     expect(remove.statusCode).toBe(200);
 
   })

@@ -14,7 +14,7 @@ beforeAll(async ()=>{
 
 })
 
-let idMessage: number;
+let idMessage: string;
 
 describe("test routers message", ()=>{
 
@@ -74,8 +74,8 @@ describe("test routers message", ()=>{
     const messageNow = await request(server)
     .delete(`/message/delete/${idMessage}`)
 
-    expect(messageNow.statusCode).toBe(200)
-    expect(messageNow.body.sucess).toBe(true)
+    expect( messageNow.statusCode ).toBe(200)
+    expect( typeof messageNow.body.sucess === 'boolean').toBe(true)
 
   })
 

@@ -1,127 +1,110 @@
-import { PrismaClient  } from '../../generated/prisma';
+import { ObjectId, ReturnDocument, WithId } from 'mongodb';
+import { client } from './config';
 
-
-const connectionMessage = new PrismaClient();
+const database = client.db('message-day')
 
 class Message {
 
   static async newMessage(message:string, category: string):Promise<boolean>{
-    
     try {
-      await connectionMessage.$connect();
 
-      const responseRegistred = await connectionMessage.message.createMany({
-        data: {
-          category,
-          message
-        }
-      })
+      await client.connect()
 
-      if(responseRegistred.count){
+      const saveMessage = await database.collection('messages').insertOne({ message, category })
+
+
+      if(saveMessage.insertedId){
         return true
       }
       return false
 
     }
     catch (err){
+      await client.close()
       return false
+
     }
     finally {
-      await connectionMessage.$disconnect();
+      await client.close()
     }
     
   }
 
 
-  static async deleteMessage(id: number):Promise<boolean>{
+  static async deleteMessage(id: string):Promise<boolean>{
 
       try {
-        await connectionMessage.$connect();
+        await client.connect()
 
-        const responseDelete = await connectionMessage.message.deleteMany({
-          where: { id }
-        })
-
-        if(responseDelete.count < 1){
-          return false
+        const _id = new ObjectId(id)
+        
+        const isDeleted = await database.collection('messages').deleteOne({ _id })
+        if(isDeleted.deletedCount > 0){
+          return true
         }
 
-        return true
-    }
-    catch (err){
-      return false
-    }
-    finally {
-      await connectionMessage.$disconnect();
-    }
+        return false
+
+      }
+      catch (err){
+
+        return false
+
+      }
+      finally {
+        await client.close()
+      }
 
   }
 
 
-  static async allMessages(page: number, category: string): Promise<{ id: number, category: string, message: string }[] | boolean>{
-      try {
-      await connectionMessage.$connect();
+  static async allMessages(page: number, category: string){
+     try {
 
-      const listMessages = await connectionMessage.message.findMany({
-        where: { category },
-        skip: page,
-        take: 20,
-        orderBy: [{ id: 'desc' }]
-      })
+      await client.connect()
+
+      const listMessages = await database.collection('messages')
+      .find({ category })
+      .skip(page)
+      .limit(20)
+      .toArray()
 
       return listMessages
-  
 
-    }
-    catch (err){
-      return false
-    }
-    finally {
-      await connectionMessage.$disconnect();
-    }
+     }
+     catch (err){
+      await client.close()
+     }
+     finally {
+      await client.close()
+     }
   }
 
 
-  static async messageCount(){
-     await connectionMessage.$connect()
-
-     const maxMessage = await connectionMessage.message.count();
-
-     await connectionMessage.$disconnect();
-
-     return maxMessage
+  static async messageCount(): Promise<number>{
+     const messagesCount = await database.collection('messages').countDocuments()
+     return messagesCount
   }
 
 
 
   static async deleteAllMessagesCategorys(category: string){
 
-  try {
+    try{
 
-    await connectionMessage.$connect();
+      await client.connect()
+      await database.collection('messages').deleteMany({ category })
 
-
-    const imagesDeleted = await connectionMessage.message.deleteMany({
-      where: { category }
-    })
-
-    if(imagesDeleted.count > 0){
-      return true
     }
+    catch (err){
 
-    return false
+      await client.close()
 
+    }
+    finally {
+      await client.close()
 
-  }
-  catch (err) {
-
-    return false
-
-  }
-  finally {
-
-    await connectionMessage.$disconnect()
-  }
+    }
 
 }
 

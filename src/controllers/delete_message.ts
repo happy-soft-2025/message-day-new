@@ -12,7 +12,7 @@ async function deleteMessage(req: Request, res: Response){
   }
 
 
-  const responseDeleteMessage: boolean = await Message.deleteMessage(Number(req.params.id))
+  const responseDeleteMessage: boolean = await Message.deleteMessage(req.params.id)
 
   if(!responseDeleteMessage){
     res.json({

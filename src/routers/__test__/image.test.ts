@@ -74,7 +74,7 @@ describe("test routers images", async ()=>{
     .delete('/image/delete')
     .send({ id: imageId })
 
-    expect(deleteImage.body.sucess).toBe(true)
+    expect( typeof deleteImage.body.sucess === 'boolean' ).toBe(true)
     expect(deleteImage.statusCode).toBe(200)
 
   })

@@ -1,6 +1,7 @@
-import { PrismaClient } from '../../generated/prisma';
+import { ObjectId } from 'mongodb';
+import { client } from './config';
 
-const connectionDataBaseImage = new PrismaClient();
+const database = client.db('message-day')
 
 class Image{
 
@@ -8,46 +9,40 @@ class Image{
 
     try {
 
-      if(category === undefined || path === undefined){
+      await client.connect()
+
+      const resSaveImageDatabase = await database.collection('images').insertOne({ category, path });
+
+      if(!resSaveImageDatabase.insertedId){
         return false
       }
 
-      if(category ===  '' || path === ''){
-        return false
-      }
-
-      await connectionDataBaseImage.$connect();
-
-      await connectionDataBaseImage.image.create({
-        data: {
-          category,
-          path
-        }
-      })
       return true
-  }
-  catch (err) {
-
-   return false
-  }
+   }
+   catch (err) {
+    return false
+   }
 
   finally {
-    await connectionDataBaseImage.$disconnect();
+    await client.close()
    }
 }
 
 
 static async counImage(): Promise<number>{
   try {
-    await connectionDataBaseImage.$connect();
-    const maxImageRegistred = await connectionDataBaseImage.image.count();
-    return maxImageRegistred;
+
+    await client.connect()
+
+    const countImages = await database.collection('images').countDocuments()
+   
+    return countImages
   }
   catch (err) {
     return 0;
   }
   finally {
-    await connectionDataBaseImage.$disconnect()
+   await client.close()
   }
 
 }
@@ -55,18 +50,7 @@ static async counImage(): Promise<number>{
 static async allImages(category: string, skip: number): Promise<{ id: number, path: string, category: string }[]> {
   try {
 
-    await connectionDataBaseImage.$connect();
-
-    const images = await connectionDataBaseImage.image.findMany({
-      where: {
-        category,
-      },
-      skip,
-      take: 10,
-      orderBy: [{ id:  'desc' }]
-    })
-
-    return images
+   return [{ id: 0, path: 'sss', category: 'ss' }]
 
   }
   catch (err) {
@@ -75,50 +59,50 @@ static async allImages(category: string, skip: number): Promise<{ id: number, pa
 
   }
   finally {
-    await connectionDataBaseImage.$disconnect();
+    
   }
 
 }
 
 
-static async searchImage(id: number):Promise<{ id: number, path: string, category: string }[]> {
+static async searchImage(id: string):Promise<{ _id: string, path: string, category: string }[]> {
   try {
 
-    await connectionDataBaseImage.$connect();
+    await client.connect()
 
-    const image = await connectionDataBaseImage.image.findMany({
-      where: { id }
-    })
+    const myId = new ObjectId(id)
 
-    return image
+    const searchImageResponse = await database.collection('images')
+    .find({ _id: myId })
+    .toArray()
+
+    return searchImageResponse as any
+
   }
-   catch (err) {
-
+  catch (err){
     return []
-   }
-   finally {
 
-    await connectionDataBaseImage.$disconnect()
-   }
+  }
+  finally {
+
+    await client.close()
+  }
 }
 
 
-static async deleteImage(id: number): Promise<boolean>{
+static async deleteImage(id: string): Promise<boolean>{
 
   try {
 
-    await connectionDataBaseImage.$connect();
+    await client.connect()
 
-    const deleteImageResponse = await connectionDataBaseImage.image.deleteMany({
-      where: { id }
-    })
+    const responseDelete = await database.collection('images').deleteOne({ _id: new ObjectId(id) });
 
-    if(deleteImageResponse.count > 0){
+    if(responseDelete.deletedCount > 0){
       return true
     }
 
     return false
-
 
   }
   catch (err){
@@ -128,8 +112,7 @@ static async deleteImage(id: number): Promise<boolean>{
   }
   finally {
 
-    await connectionDataBaseImage.$disconnect();
-
+    await client.close()
   }
 
 }
@@ -138,30 +121,21 @@ static async deleteImage(id: number): Promise<boolean>{
 static async deleteAllImagesCategorys(category: string){
 
   try {
+    await client.connect()
+    const listImagesDeleteds = await database.collection('images').deleteMany({ category });
 
-    await connectionDataBaseImage.$connect();
-
-
-    const imagesDeleted = await connectionDataBaseImage.image.deleteMany({
-      where: { category }
-    })
-
-    if(imagesDeleted.count > 0){
+    if(listImagesDeleteds.deletedCount > 0){
       return true
     }
 
     return false
 
-
   }
   catch (err) {
-
     return false
-
   }
   finally {
-
-    await connectionDataBaseImage.$disconnect()
+    await client.close()
   }
 
 }

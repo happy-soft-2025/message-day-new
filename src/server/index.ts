@@ -10,7 +10,7 @@ server.listen(process.env.PORT || 3000, async ()=> {
   await fs.mkdir(path.resolve('.', 'src', 'images'), { recursive: true });
 
   if(process.env.DEV){
-    console.log("server init ✅", process.env.DATABASE_URL);
+    console.log("server init dev ✅ ", process.env.DATABASE_URL);
   }
 
 

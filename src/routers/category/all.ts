@@ -5,7 +5,7 @@ const all = Router();
 
 all.get('/category/all', async (req: Request, res: Response)=>{
 
-  const categorys: { id: number, category: string }[] = await Category.allCategorys();
+  const categorys: { _id: string, category: string }[] = await Category.allCategorys();
 
   res.json({
     sucess: true,
