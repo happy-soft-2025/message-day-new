@@ -1,4 +1,4 @@
-import { Router, Request, Response } from 'express';
+import { Router } from 'express';
 import { returnImages } from '../../controllers/return_images';
 
 const all = Router();
