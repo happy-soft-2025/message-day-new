@@ -52,8 +52,6 @@ static async allImages(category: string, skip: number): Promise<any[]> {
 
     await client.connect()
 
-    console.log('aqui')
-
    const listImages = await database.collection('images')
    .find({ category })
    .limit(10)
