@@ -1,0 +1,12 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.category = void 0;
+const express_1 = require("express");
+const add_1 = require("./add");
+const all_1 = require("./all");
+const remove_1 = require("./remove");
+const category = (0, express_1.Router)();
+exports.category = category;
+category.use(add_1.add);
+category.use(all_1.all);
+category.use(remove_1.remove);

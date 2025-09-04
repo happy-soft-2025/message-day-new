@@ -50,18 +50,21 @@ static async counImage(): Promise<number>{
 static async allImages(category: string, skip: number): Promise<any[]> {
   try {
 
+    await client.connect()
+
+    console.log('aqui')
+
    const listImages = await database.collection('images')
    .find({ category })
    .limit(10)
    .skip(skip)
-   .sort(-1)
    .toArray()
 
    return listImages
 
   }
   catch (err) {
-
+   console.log(err)
     return []
 
   }

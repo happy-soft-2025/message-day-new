@@ -9,6 +9,8 @@ async function returnImages(req: Request, res: Response, next: NextFunction){
 
     const images = await Image.allImages(category, Number(page));
 
+    console.log(images)
+
     res.json({
       sucess: true,
       images

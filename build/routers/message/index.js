@@ -1,0 +1,18 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.message = void 0;
+const express_1 = require("express");
+const now_1 = require("./now");
+const view_1 = require("./view");
+const add_1 = require("./add");
+const allMessages_1 = require("./allMessages");
+const remove_1 = require("./remove");
+const count_1 = require("./count");
+const message = (0, express_1.Router)();
+exports.message = message;
+message.use(now_1.messageNow);
+message.use(view_1.view);
+message.use(add_1.addMessage);
+message.use(allMessages_1.allMessages);
+message.use(remove_1.remove);
+message.use(count_1.count);
