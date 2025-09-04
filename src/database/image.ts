@@ -56,6 +56,7 @@ static async allImages(category: string, skip: number): Promise<any[]> {
    .find({ category })
    .limit(10)
    .skip(skip)
+   .sort({ _id : -1 })
    .toArray()
 
    return listImages

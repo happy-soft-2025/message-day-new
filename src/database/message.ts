@@ -67,13 +67,13 @@ class Message {
       .find({ category })
       .skip(page)
       .limit(20)
-      .sort(-1)
+      .sort({ _id: -1 })
       .toArray()
 
       return listMessages
-
      }
      catch (err){
+      console.log(err)
       await client.close()
      }
      finally {
